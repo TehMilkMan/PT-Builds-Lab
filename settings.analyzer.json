@@ -1,0 +1,262 @@
+﻿{
+  "AnalyzerSettings": {
+    "MarketAnalyzer": {
+      "StoreDataMaxHours": 120, // Number of hours to store market data
+      "IntervalMinutes": 1, // Interval in minutes for PTMagic to check market trends and triggers
+      "ExcludeMainCurrency": false, // Excludes the main currency (for example BTC) from market trend analysis
+      "MarketTrends": [
+        {
+          "Name": "ALTUSD24h", // UNIQUE market trend name (to be referenced by your triggers below)
+          "Platform": "CoinMarketCap", // Platform to grab prices from (Allowed values are: CoinMarketCap, Exchange)
+          "MaxMarkets": 50, // Number of markets/pairs to analyze sorted by 24h volume
+          "TrendMinutes": 1440 // Number of minutes to build a trend (1440 = 24h, 720 = 12h, 60 = 1h)
+        },
+		{
+          "Name": "BTC1h",
+          "Platform": "Exchange",
+          "MaxMarkets": 1,
+          "TrendMinutes": 60,
+          "TrendCurrency": "CoinMarketCap"
+        },
+        {
+          "Name": "Exchange1h",
+          "Platform": "Exchange",
+          "MaxMarkets": 50,
+          "TrendMinutes": 60,
+          "TrendCurrency": "Market" 
+        },
+        {
+          "Name": "Exchange3h",
+          "Platform": "Exchange",
+          "MaxMarkets": 50,
+          "TrendMinutes": 180,
+          "TrendCurrency": "Market" 
+        },
+        {
+          "Name": "Exchange12h",
+          "Platform": "Exchange",
+          "MaxMarkets": 50,
+          "TrendMinutes": 720,
+          "TrendCurrency": "Market"
+        },
+        {
+          "Name": "Exchange1d",  // 1 day Trend
+          "Platform": "Exchange",
+          "MaxMarkets": 50,
+          "TrendMinutes": 1440,
+          "TrendCurrency": "Market"
+        },
+		{
+          "Name": "Exchange3d", // 3 day trend
+          "Platform": "Exchange",
+          "MaxMarkets": 50,
+          "TrendMinutes": 4320,
+          "TrendCurrency": "Market"
+        },
+        {
+          "Name": "Exchange5d", // 5 day trend
+          "Platform": "Exchange",
+          "MaxMarkets": 50,
+          "TrendMinutes": 7200,
+          "TrendCurrency": "Market"
+        }
+      ]
+    },
+    "GlobalSettings": [ 
+      {
+        "SettingName": "Super Bear", 
+        "TriggerConnection": "OR", 
+        "Triggers": [ 
+		   {
+            "MarketTrendName": "Exchange12h",
+            "MaxChange": -3.00
+          },
+          {
+            "MarketTrendName": "Exchange1d",
+            "MaxChange": -5.00
+          }
+        ],
+        "PairsProperties": {
+          "ALL_sell_only_mode": false,
+		  "ALL_buy_value": -20,
+		  "ALL_sell_value": 1,
+		  "ALL_trailing_buy": 0.51,
+          "ALL_trailing_profit": 0.3
+        },
+        "DCAProperties": {
+		  "trailing_profit": 0.3
+        }
+      },
+      {
+        "SettingName": "Bear",
+        "TriggerConnection": "OR",
+        "Triggers": [
+          {
+            "MarketTrendName": "Exchange12h",
+            "MaxChange": -1.00,
+			"MinChange": -3.00
+          },
+          {
+            "MarketTrendName": "Exchange1d",
+            "MaxChange": -2.00,
+            "MinChange": -5.00
+          }
+        ],
+        "PairsProperties": {
+          "ALL_sell_only_mode": false,
+		  "ALL_buy_value": -10,
+		  "ALL_sell_value": 2,
+          "ALL_trailing_profit": 0.5,
+          "ALL_trailing_buy": 0.5
+        },
+        "DCAProperties": {
+		  "trailing_profit": 0.5
+        }
+      },
+      {
+        "SettingName": "Super Bull",
+        "TriggerConnection": "AND",
+        "Triggers": [
+          {
+            "MarketTrendName": "Exchange12h",
+            "MinChange": 3.00
+          },
+          {
+            "MarketTrendName": "Exchange1d",
+            "MinChange": 5.00
+          }
+        ],
+        "PairsProperties": {
+          "ALL_sell_only_mode": false,
+		  "ALL_sell_value": 4,
+		  "ALL_trailing_profit": 1,
+		  "ALL_buy_value": 25,
+          "ALL_trailing_buy": 0.6
+        },
+        "DCAProperties": {
+		  "sell_value": 1,
+		  "trailing_profit": 0.5
+        }
+      },
+      {
+        "SettingName": "Bull",
+        "TriggerConnection": "AND",
+        "Triggers": [
+          {
+            "MarketTrendName": "Exchange12h",
+            "MinChange": 1.50
+          },
+          {
+            "MarketTrendName": "Exchange1d",
+            "MinChange": 3.00
+          }
+        ],
+        "PairsProperties": {
+          "ALL_sell_only_mode": false,
+		  "ALL_sell_value": 3.5,
+		  "ALL_trailing_profit": 1,
+		  "ALL_buy_value": 10,
+          "ALL_trailing_buy": 0.6
+        },
+        "DCAProperties": {
+		  "sell_value": 1,
+		  "trailing_profit": 0.5
+        }
+      },
+      {
+        "SettingName": "Default",
+        "PairsProperties": {
+          "File": "PAIRS.PROPERTIES"
+        },
+        "DCAProperties": {
+          "File": "DCA.PROPERTIES"
+        },
+        "IndicatorsProperties": {
+          "File": "INDICATORS.PROPERTIES"
+        }
+      }
+    ],
+    "SingleMarketSettings": [ 
+	  //Long Term downtrend  - lets just bee more defensive and sell faster
+      {
+        "SettingName": "LongTermDowntrend", 
+        "TriggerConnection": "OR",
+        "Triggers": [
+          {
+            "MarketTrendName": "Exchange3d",
+            "MarketTrendRelation": "Absolute",
+            "MaxChange": -6.01
+          },
+          {
+            "MarketTrendName": "Exchange5d",
+            "MarketTrendRelation": "Absolute",
+            "MaxChange": -10.01
+          }
+        ],
+        "PairsProperties": {
+		  "ALL_sell_value_OFFSETPERCENT": -30,
+		  "ALL_buy_value_OFFSETPERCENT": -50,
+		  "ALL_trailing_profit_OFFSETPERCENT": -30
+        }
+      },
+      {
+	  //Long Term Uptrend  - this is the time to make money
+        "SettingName": "LongTermUptrend",
+        "TriggerConnection": "OR",
+        "Triggers": [
+          {
+            "MarketTrendName": "Exchange3d",
+            "MarketTrendRelation": "Absolute",
+            "MinChange": 5.01
+          },
+          {
+            "MarketTrendName": "Exchange5d",
+            "MarketTrendRelation": "Absolute",
+            "MinChange": 8.01
+          }
+        ],
+        "PairsProperties": {
+		  "ALL_buy_value_OFFSETPERCENT":  100,
+		  "ALL_trailing_buy_OFFSETPERCENT": -40
+        }
+      },
+	  //Long Term downtrend  - also time to make some money but its okay to lower profits just to be sure to no get caught in a downtrend
+      {
+        "SettingName": "LongTermSideways",
+        "TriggerConnection": "OR",
+        "Triggers": [
+          {
+            "MarketTrendName": "Exchange3d",
+            "MarketTrendRelation": "Absolute",
+            "MinChange": -6,
+			"MaxChange": 5
+          },
+          {
+            "MarketTrendName": "Exchange5d",
+            "MarketTrendRelation": "Absolute",
+			"MinChange": -10,
+            "MaxChange": 8
+          }
+        ],
+        "PairsProperties": {
+		  "ALL_buy_value_OFFSETPERCENT": 50,
+		  "ALL_trailing_buy_OFFSETPERCENT": -20
+        }	
+      },
+	  {
+		"SettingName": "BlacklistNewCoins",
+		"TriggerConnection": "OR",
+		"Triggers": [
+			{
+			"AgeDaysLowerThan": 5
+			}
+		],
+		"PairsProperties": {
+			"ALL_trading_enabled": false,
+			"ALL_sell_only_mode": true,
+			"ALL_DCA_enabled": false
+		}
+		}
+    ]
+  }
+}
